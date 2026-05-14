@@ -12,6 +12,6 @@ export default defineConfig({
   cloudflare: false,
   tanstackStart: {
     server: { entry: "server" },
-    deployment: "static",
+    deployment: "vercel-serverless",
   },
 });
