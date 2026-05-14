@@ -1,7 +1,7 @@
 import server from "../dist/server/server.js";
 
-export const config = {
-  runtime: "edge",
+// We've switched to the Node.js runtime (by removing the Edge config)
+// to support dependencies like tailwind-merge and tanstack/router.
+export default async (request) => {
+  return server.fetch(request);
 };
-
-export default server.fetch;
