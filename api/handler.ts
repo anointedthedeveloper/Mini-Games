@@ -1,9 +1,8 @@
 import server from "../src/server";
 
-// Explicitly force Node.js runtime to support modules like tailwind-merge
-// that are not compatible with the restricted Edge environment.
+// Use a standard Node.js handler. Vercel will auto-detect the runtime.
 export const config = {
-  runtime: "nodejs20.x",
+  memory: 1024,
 };
 
 export default async function handler(request: Request) {
