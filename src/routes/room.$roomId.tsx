@@ -234,11 +234,6 @@ function RoomPage() {
       return;
     }
     const playerIds = players.map((p) => p.player_id);
-    if (!room) {
-      toast.error("Unable to start game: room data is unavailable");
-      return;
-    }
-
     const initialState = getInitialGameState(game, playerIds);
 
     await supabase
