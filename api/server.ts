@@ -11,7 +11,7 @@ function createRequest(req: any) {
     if (value === undefined) continue;
     if (Array.isArray(value)) {
       value.forEach((item) => item && headers.append(name, item));
-    } else {
+    } else if (typeof value === "string") {
       headers.set(name, value);
     }
   }
@@ -42,7 +42,7 @@ export default async function handler(req: any, res: any) {
     const entry = await import("@tanstack/react-start/server-entry");
     const serverEntry = entry.default ?? entry;
     const request = createRequest(req);
-    const response = await serverEntry.fetch(request, {}, {});
+    const response = await serverEntry.fetch(request);
     await sendResponse(res, response);
   } catch (error) {
     console.error(error);
