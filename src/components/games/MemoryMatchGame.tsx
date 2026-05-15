@@ -2,10 +2,10 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { getGameSlot, replaceGameSlot, type Room } from "./types";
+import { buildMemoryDeck } from "./utils";
 
 const GID = "memory";
 const PAIRS = 8; // 16 cards
-const SYMBOLS = ["★", "●", "▲", "■", "♥", "♦", "♣", "♠", "◆", "◉"];
 
 interface MemState {
   cards?: string[]; // length PAIRS*2
@@ -15,20 +15,6 @@ interface MemState {
   turn?: string;
   scores?: Record<string, number>;
   lockUntil?: number; // ms epoch — host clears flipped after
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function buildDeck(): string[] {
-  const syms = SYMBOLS.slice(0, PAIRS);
-  return shuffle([...syms, ...syms]);
 }
 
 export function MemoryMatchGame({
@@ -47,27 +33,6 @@ export function MemoryMatchGame({
   const scores = state.scores ?? {};
   const turn = state.turn;
   const myTurn = turn === playerId;
-
-  const initRef = useRef(false);
-  useEffect(() => {
-    if (initRef.current) return;
-    if (players.length >= 2 && !cards && room.host_id === playerId) {
-      initRef.current = true;
-      supabase
-        .from("rooms")
-        .update({
-          state: replaceGameSlot(room, GID, {
-            cards: buildDeck(),
-            flipped: [],
-            matched: [],
-            owner: {},
-            scores: {},
-            turn: players[0].player_id,
-          }),
-        })
-        .eq("id", room.id);
-    }
-  }, [players, cards, room, playerId]);
 
   // Host: when 2 cards flipped, schedule resolve
   useEffect(() => {
@@ -122,7 +87,7 @@ export function MemoryMatchGame({
       .from("rooms")
       .update({
         state: replaceGameSlot(room, GID, {
-          cards: buildDeck(),
+          cards: buildMemoryDeck(PAIRS),
           flipped: [],
           matched: [],
           owner: {},

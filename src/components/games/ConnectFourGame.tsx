@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { getGameSlot, replaceGameSlot, type Room } from "./types";
@@ -52,31 +52,6 @@ export function ConnectFourGame({
   const board: Cell[] = state.board ?? Array(ROWS * COLS).fill(null);
   const marks = state.marks;
   const turn = state.turn;
-
-  const initRef = useRef(false);
-  useEffect(() => {
-    if (initRef.current) return;
-    if (
-      players.length >= 2 &&
-      (!marks || Object.keys(marks).length < 2) &&
-      room.host_id === playerId
-    ) {
-      initRef.current = true;
-      const [p1, p2] = players;
-      supabase
-        .from("rooms")
-        .update({
-          state: replaceGameSlot(room, GID, {
-            board: Array(ROWS * COLS).fill(null),
-            marks: { [p1.player_id]: "R", [p2.player_id]: "Y" },
-            turn: p1.player_id,
-            winner: null,
-          }),
-        })
-        .eq("id", room.id);
-    }
-  }, [players, marks, room, playerId]);
-
   const myMark = marks?.[playerId];
   const { mark: winMark, line: winLine } = checkWinner(board);
   const isDraw = !winMark && board.every((c) => c);

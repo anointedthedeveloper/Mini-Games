@@ -6,10 +6,13 @@ const NAME_KEY = "mg_player_name";
 
 export function getPlayerId(): string {
   if (typeof window === "undefined") return "";
-  let id = localStorage.getItem(ID_KEY);
+  // Tab-scoped identity. Two tabs on the same device must be two players,
+  // otherwise the lobby dedupes them and turn-based games never assign marks.
+  // sessionStorage survives reload but is unique per tab.
+  let id = sessionStorage.getItem(ID_KEY);
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem(ID_KEY, id);
+    sessionStorage.setItem(ID_KEY, id);
   }
   return id;
 }

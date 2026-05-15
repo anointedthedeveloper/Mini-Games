@@ -33,6 +33,8 @@ import { MemoryMatchGame } from "@/components/games/MemoryMatchGame";
 import { ReactionDuelGame } from "@/components/games/ReactionDuelGame";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Footer } from "@/components/footer";
+import { getInitialGameState } from "@/components/games/utils";
+import { replaceGameSlot } from "@/components/games/types";
 
 export const Route = createFileRoute("/room/$roomId")({
   component: RoomPage,
@@ -231,7 +233,17 @@ function RoomPage() {
       toast.error("All players must be ready");
       return;
     }
-    await supabase.from("rooms").update({ game, status: "playing" }).eq("id", roomId);
+    const playerIds = players.map((p) => p.player_id);
+    const initialState = getInitialGameState(game, playerIds);
+
+    await supabase
+      .from("rooms")
+      .update({
+        game,
+        status: "playing",
+        state: replaceGameSlot(room, game, initialState),
+      })
+      .eq("id", roomId);
   };
 
   const backToLobby = async () => {

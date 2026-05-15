@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { getGameSlot, replaceGameSlot, type Room } from "./types";
@@ -41,28 +41,6 @@ export function TicTacToeGame({
   const board = state.board ?? Array(9).fill(null);
   const marks = state.marks;
   const turn = state.turn;
-
-  // Auto-init when 2 players present and no marks assigned (host writes once)
-  const initRef = useRef(false);
-  useEffect(() => {
-    if (initRef.current) return;
-    if (players.length >= 2 && (!marks || Object.keys(marks).length < 2) && room.host_id === playerId) {
-      initRef.current = true;
-      const [p1, p2] = players;
-      const newMarks = { [p1.player_id]: "X" as const, [p2.player_id]: "O" as const };
-      supabase
-        .from("rooms")
-        .update({
-          state: replaceGameSlot(room, GID, {
-            board: Array(9).fill(null),
-            marks: newMarks,
-            turn: p1.player_id,
-            winner: null,
-          }),
-        })
-        .eq("id", room.id);
-    }
-  }, [players, marks, room, playerId]);
 
   const { mark: winMark, line: winLine } = checkWinner(board);
   const isDraw = !winMark && board.every((c) => c);
