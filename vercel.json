@@ -1,9 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "bun run build",
-  "installCommand": "bun install",
-  "outputDirectory": ".output/public",
+  "buildCommand": "npm run vercel-build",
+  "installCommand": "npm install",
+  "outputDirectory": "dist",
+  "functions": {
+    "dist/server/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]
