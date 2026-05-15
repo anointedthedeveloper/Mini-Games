@@ -6,7 +6,14 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/api/server"
+      "destination": "/api/handler"
     }
-  ]
+  ],
+  "functions": {
+    "api/handler.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }
