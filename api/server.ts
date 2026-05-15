@@ -1,7 +1,7 @@
 import server from "../src/server";
 
 export const config = {
-  runtime: "edge",
+  runtime: "nodejs20.x",
 };
 
 export default async function (request: Request) {
