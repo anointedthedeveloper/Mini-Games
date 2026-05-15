@@ -13,9 +13,16 @@ function createSupabaseClient() {
       ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
       ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
+    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Please set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in your hosting environment (e.g. Vercel Dashboard).`;
     console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    // Do not throw during module load/init phase as it crashes the entire serverless function.
+    // Instead, we will handle the error when the client is actually used.
+    return {
+      from: () => { throw new Error(message); },
+      auth: { getSession: async () => ({ data: { session: null }, error: null }) },
+      rpc: () => { throw new Error(message); },
+      // Add other methods as needed or use a proxy
+    } as any;
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {

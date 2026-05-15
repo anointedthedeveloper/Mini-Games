@@ -1,18 +1,5 @@
 {
   "version": 2,
   "buildCommand": "bun run vercel-build",
-  "installCommand": "bun install",
-  "outputDirectory": "dist/client",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/handler"
-    }
-  ],
-  "functions": {
-    "api/handler.ts": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  }
+  "installCommand": "bun install"
 }
